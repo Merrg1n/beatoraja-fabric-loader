@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "io.github.merrg1n.beatorajafabric.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MainControllerMixin",
+    "MainLoaderMixin"
+  ]
+}

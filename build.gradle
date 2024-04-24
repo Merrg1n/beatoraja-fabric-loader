@@ -1,0 +1,63 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'eclipse'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.fabricmc.net/"
+    }
+}
+
+sourceCompatibility = '8'
+targetCompatibility = '8'
+
+dependencies {
+    compileOnly files("test/beatoraja.jar")
+    implementation "net.fabricmc:fabric-loader:${project.loaderVersion}"
+    implementation "net.fabricmc:access-widener:${project.awVersion}"
+    implementation "net.fabricmc:sponge-mixin:${project.mixinVersion}"
+    implementation "org.ow2.asm:asm:${project.asmVersion}"
+    implementation "org.ow2.asm:asm-analysis:${project.asmVersion}"
+    implementation "org.ow2.asm:asm-commons:${project.asmVersion}"
+    implementation "org.ow2.asm:asm-tree:${project.asmVersion}"
+    implementation "org.ow2.asm:asm-util:${project.asmVersion}"
+}
+
+application {
+    mainClassName = "io.github.merrg1n.beatorajafabric.loader.Main"
+}
+
+run {
+    jvmArgs += [
+            '-Dfabric.development=true',
+            '-Dmixin.debug=true'
+    ]
+    workingDir = file("test");
+    workingDir.mkdir();
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': "io.github.merrg1n.beatorajafabric.loader.Main",
+                'Class-Path': configurations.runtimeClasspath.collect { it.getName() }.join(' '),
+                'Specification-Version': targetCompatibility,
+                'Multi-Release': 'true'
+        )
+    }
+}
+
+tasks.register('copyToLib', Copy) {
+    into "build/libs/libraries"
+    from configurations.runtimeClasspath
+}
+
+build.dependsOn(copyToLib)
