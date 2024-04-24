@@ -3,6 +3,7 @@
   "package": "io.github.merrg1n.beatorajafabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "LuajavaLibMixin",
     "MainControllerMixin",
     "MainLoaderMixin"
   ]
