@@ -14,6 +14,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
@@ -119,6 +120,7 @@ public class BeatorajaGameProvider implements GameProvider {
         this.arguments = new Arguments();
         arguments.parse(args);
 
+        classPath = new ArrayList<>();
         // This is a little messy and depends on the layout of this project, for a real provider write this in a way
         // that it can survive existing in production.
         CodeSource codeSource = BeatorajaGameProvider.class.getProtectionDomain().getCodeSource();
@@ -128,17 +130,24 @@ public class BeatorajaGameProvider implements GameProvider {
         } catch (URISyntaxException e) {
             throw new RuntimeException("Failed to find source of BeatorajaGameProvider?", e);
         }
+        classPath.add(codePath);
 
         Path gamePath;
         try {
-            gamePath = getLaunchDirectory()
-                    .resolve("beatoraja.jar")
-                    .toRealPath();
+            gamePath = getLaunchDirectory().resolve("beatoraja.jar").toRealPath();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to find game jar", e);
+            throw new RuntimeException("Failed to find beatoraja.jar", e);
         }
+        classPath.add(gamePath);
 
-        classPath = Arrays.asList(codePath, gamePath);
+        try {
+            Path irPath = getLaunchDirectory().resolve("ir").toRealPath();
+            try (Stream<Path> stream = Files.list(irPath)) {
+                stream.forEach(classPath::add);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load ir jar", e);
+        }
 
         version = BeatorajaVersionLookup.getVersion(gamePath);
 
