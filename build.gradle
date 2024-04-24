@@ -16,7 +16,11 @@ sourceCompatibility = '8'
 targetCompatibility = '8'
 
 dependencies {
-    compileOnly files("test/beatoraja.jar")
+    // TODO: download beatoraja from mocha-repository.info automatically
+    compileOnly files("run/beatoraja.jar")
+    // beatoraja doesn't use gradle or maven to build itself.
+    // So you need put beatoraja's something into run folder manually.
+
     implementation "net.fabricmc:fabric-loader:${project.loaderVersion}"
     implementation "net.fabricmc:access-widener:${project.awVersion}"
     implementation "net.fabricmc:sponge-mixin:${project.mixinVersion}"
@@ -36,8 +40,8 @@ run {
             '-Dfabric.development=true',
             '-Dmixin.debug=true'
     ]
-    workingDir = file("test");
-    workingDir.mkdir();
+    workingDir = file("run")
+    workingDir.mkdir()
 }
 
 java {
