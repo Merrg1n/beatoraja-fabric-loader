@@ -1,4 +1,4 @@
-# BeatorajaFabricLoader
+# beatoraja-fabric-loader
 
 Use [Fabric](https://fabricmc.net/) to modify your beatoraja!
 
