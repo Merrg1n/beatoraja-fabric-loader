@@ -77,7 +77,7 @@ distributions {
                 into "libraries"
             }
             from(layout.buildDirectory.dir("libs")) {
-                exclude "*-sources.jar"
+                include "${archives_base_name}-${version}.jar"
                 rename "${archives_base_name}-${version}.jar", "${archives_base_name}.jar"
                 into "/"
             }
