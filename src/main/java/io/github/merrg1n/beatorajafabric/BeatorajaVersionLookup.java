@@ -1,4 +1,4 @@
-package io.github.merrg1n.beatorajafabric.loader;
+package io.github.merrg1n.beatorajafabric;
 
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.util.ExceptionUtil;
@@ -30,6 +30,9 @@ public final class BeatorajaVersionLookup {
         String ver = Optional.ofNullable(cp.getInputStream("bms/player/beatoraja/MainController.class"))
                 .flatMap(is -> analyze(is, new FieldStringConstantVisitor("VERSION")))
                 .orElse("beatoraja unknown");
+        // There are many beatoraja forks
+        // such as LR2oraja, LR2oraja endless dream, ...
+        // TODO: normalize different forks version.
         return ver.split(" ")[1];
     }
 
@@ -92,7 +95,7 @@ public final class BeatorajaVersionLookup {
         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
             if (result != null || !name.equals("<clinit>")) return null;
 
-            // capture LDC ".." followed by PUTSTATIC this.fieldName
+            // capture LDC  followed by PUTSTATIC this.fieldName
             return new InsnFwdMethodVisitor() {
                 @Override
                 public void visitLdcInsn(Object value) {

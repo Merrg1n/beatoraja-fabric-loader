@@ -1,12 +1,14 @@
-package io.github.merrg1n.beatorajafabric.loader;
+package io.github.merrg1n.beatorajafabric;
 
+import io.github.merrg1n.beatorajafabric.patch.*;
 import net.fabricmc.loader.impl.game.GameProvider;
 import net.fabricmc.loader.impl.game.patch.GameTransformer;
 import net.fabricmc.loader.impl.launch.FabricLauncher;
 import net.fabricmc.loader.impl.metadata.BuiltinModMetadata;
 import net.fabricmc.loader.impl.metadata.ContactInformationImpl;
 import net.fabricmc.loader.impl.util.Arguments;
-import org.spongepowered.asm.mixin.Mixins;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +25,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BeatorajaGameProvider implements GameProvider {
-    private static final GameTransformer TRANSFORMER = new GameTransformer();
+    private static final GameTransformer TRANSFORMER = new GameTransformer(
+            new EntrypointPatch(),
+            new BrandingPatch(),
+            new LuaJClassLoaderPatch()
+    );
 
     /**
      * The entry point of the target, in this case it's "com.example.base.Launcher".
@@ -146,7 +152,7 @@ public class BeatorajaGameProvider implements GameProvider {
                 stream.forEach(classPath::add);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load ir jar", e);
+            Log.warn(LogCategory.GAME_PROVIDER, "Failed to load beatoraja ir jar.", e);
         }
 
         version = BeatorajaVersionLookup.getVersion(gamePath);
@@ -186,7 +192,6 @@ public class BeatorajaGameProvider implements GameProvider {
 
     @Override
     public void launch(ClassLoader loader) {
-        Mixins.addConfiguration("beatoraja.mixins.json");
         String targetClass = getEntrypoint();
 
         MethodHandle invoker;

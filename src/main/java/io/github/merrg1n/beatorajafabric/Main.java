@@ -1,4 +1,4 @@
-package io.github.merrg1n.beatorajafabric.loader;
+package io.github.merrg1n.beatorajafabric;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.impl.launch.knot.Knot;
