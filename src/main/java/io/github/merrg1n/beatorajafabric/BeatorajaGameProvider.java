@@ -26,8 +26,7 @@ import java.util.stream.Stream;
 
 public class BeatorajaGameProvider implements GameProvider {
     private static final GameTransformer TRANSFORMER = new GameTransformer(
-            new EntrypointPatch(),
-            new BrandingPatch(),
+            new MainLoaderPatch(),
             new LuaJClassLoaderPatch()
     );
 
@@ -173,6 +172,13 @@ public class BeatorajaGameProvider implements GameProvider {
                 })
                 .filter((path) -> !classPath.contains(path))
                 .collect(Collectors.toList());
+
+        if (System.getProperty("java.version").startsWith("1.8")) // JAVA 8
+        {
+            String javaHome = System.getProperty("java.home");
+            Path jfxrtPath = Paths.get(javaHome, "lib", "ext", "jfxrt.jar");
+            parentClassPath.add(jfxrtPath);
+        }
 
         launcher.setValidParentClassPath(parentClassPath);
 

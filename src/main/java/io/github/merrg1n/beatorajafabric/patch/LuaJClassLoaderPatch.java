@@ -33,29 +33,31 @@ public class LuaJClassLoaderPatch extends GamePatch {
         ListIterator<AbstractInsnNode> it = targetMethod.instructions.iterator();
         while (it.hasNext()) {
             AbstractInsnNode inst = it.next();
-            if (inst.getOpcode() == Opcodes.INVOKESTATIC) {
-                MethodInsnNode isInst = (MethodInsnNode) inst;
-                if (!isInst.owner.equals("java/lang/ClassLoader") || !isInst.name.equals("getSystemClassLoader"))
-                    continue;
-                it.remove(); // remove this call
-                it.add(new VarInsnNode(Opcodes.ALOAD, 0)); // load this
-                it.add(new MethodInsnNode(
-                        Opcodes.INVOKEVIRTUAL,
-                        "java/lang/Object",
-                        "getClass",
-                        "()Ljava/lang/Class;",
-                        false
-                ));
-                it.add(new MethodInsnNode(
-                        Opcodes.INVOKEVIRTUAL,
-                        "java/lang/Class",
-                        "getClassLoader",
-                        "()Ljava/lang/ClassLoader;",
-                        false
-                )); // call this.getClass().getClassLoader()
-                applied = true;
-                break;
-            }
+
+            // find invokestatic getSystemClassLoader
+            if (inst.getOpcode() != Opcodes.INVOKESTATIC) continue;
+            MethodInsnNode isInst = (MethodInsnNode) inst;
+            if (!isInst.owner.equals("java/lang/ClassLoader") || !isInst.name.equals("getSystemClassLoader"))
+                continue;
+
+            it.remove(); // remove this call
+            it.add(new VarInsnNode(Opcodes.ALOAD, 0)); // load this
+            it.add(new MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    "java/lang/Object",
+                    "getClass",
+                    "()Ljava/lang/Class;",
+                    false
+            ));
+            it.add(new MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    "java/lang/Class",
+                    "getClassLoader",
+                    "()Ljava/lang/ClassLoader;",
+                    false
+            )); // call this.getClass().getClassLoader()
+            applied = true;
+            break;
         }
         if (applied) {
             classEmitter.accept(targetClazz);

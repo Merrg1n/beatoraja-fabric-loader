@@ -16,9 +16,12 @@ repositories {
 sourceCompatibility = 8
 targetCompatibility = 8
 
-version = project_version
-group = maven_group
-archivesBaseName = archives_base_name
+version = project.project_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
 
 var beatorajaFileName = "beatoraja${beatoraja_version}-modernchic"
 
@@ -42,7 +45,7 @@ task prepareBeatoraja(dependsOn: unzipBeatoraja, type: Copy) {
     from project.file("run/${beatorajaFileName}")
     into project.file("run")
     doLast {
-        delete project.file("run/beatoraja0.8.7-modernchic")
+        delete project.file("run/beatoraja${beatorajaFileName}")
     }
 }
 
