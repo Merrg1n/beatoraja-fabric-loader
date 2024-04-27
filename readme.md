@@ -9,3 +9,7 @@ Use [Fabric](https://fabricmc.net/) to modify your beatoraja!
 3. Put mods in the `mods/` folder, or write some mods.
 4. Run `beatoraja-fabric-config.bat` or `beatoraja-fabric-config.command`.
 5. Enjoy!
+
+## Development
+
+You can use this [template](https://github.com/Merrg1n/beatoraja-example-mod) to start your mod development.
